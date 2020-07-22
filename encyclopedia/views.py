@@ -9,7 +9,7 @@ def index(request):
         "entries": util.list_entries()
     })
 
-def wiki(request, title):
+def wiki_entry(request, title):
         markdowner = Markdown()
         if util.get_entry(title):
             return render(request, "encyclopedia/wiki.html", {
