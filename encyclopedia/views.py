@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from markdown2 import Markdown
 from os import path
+import random
 
 from . import util
 
@@ -90,7 +91,8 @@ def new_page(request):
             return render(request, "encyclopedia/new_page.html", {
                 "title_exists": "E",
                 "title": form["text-title"],
-                "content": form["text-content"]
+                "content": form["text-content"],
+                "invalid": "is-invalid"
             })
         
         # Write the title and contents of the page into markdown files
@@ -103,3 +105,7 @@ def new_page(request):
         return HttpResponseRedirect(reverse("index"))
 
     return render(request, "encyclopedia/new_page.html")
+
+def random_page(request):
+    random_value = random.choice(util.list_entries())
+    return HttpResponseRedirect(reverse("wiki_entry", args=[random_value]))

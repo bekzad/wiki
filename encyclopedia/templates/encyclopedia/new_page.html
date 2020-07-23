@@ -9,7 +9,7 @@
     <form action="{% url 'new_page' %}" method="post">
         {% csrf_token %}
         <div class="form-group">
-            <input name="text-title" type="text" class="form-control" placeholder="Title" autocomplete="off" autofocus required value="{{ title }}">
+            <input name="text-title" type="text" class="form-control {{ invalid }}" placeholder="Title" autocomplete="off" autofocus required value="{{ title }}">
 
             {% if no_title %}
                 <li>Please fill in the title</li>
@@ -24,7 +24,7 @@
             {% if no_content %}
                 <li>Please fill in the content</li>
             {% endif %}
-            
+
             <button class="btn btn-primary float-right">Save</button>
         </div>
     </form>
