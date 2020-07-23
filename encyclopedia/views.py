@@ -51,6 +51,7 @@ def search(request):
                 if search.lower() in sub.lower():
                     substrings.append(sub)
 
+            # Display the index page with search results
             return render(request, "encyclopedia/index.html", {
                 "entries": substrings,
                 "form": NewSearchForm()
