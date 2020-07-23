@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from markdown2 import Markdown
+from os import path
 
 from . import util
 
@@ -36,7 +37,7 @@ def search(request):
         # Get the form data from post
         form = NewSearchForm(request.POST)
 
-        # Validate the form
+        # Validate the form automatically
         if form.is_valid():
 
             # Save the data of input field into a variable search
@@ -70,7 +71,11 @@ def search(request):
 # Creates a new page
 def new_page(request):
     if request.method == "POST":
+
+        # Get the form data
         form = request.POST
+
+        # Validate the form manually
         if not form["text-title"]:
             return render(request, "encyclopedia/new_page.html", {
                 "no_title": "N"
@@ -79,15 +84,22 @@ def new_page(request):
             return render(request, "encyclopedia/new_page.html", {
                 "no_content": "T"
             })
+
+        # If the title already exists the error message appears and the same form is seen
         if form["text-title"] in util.list_entries():
             return render(request, "encyclopedia/new_page.html", {
-                "title_exists": "E"
+                "title_exists": "E",
+                "title": form["text-title"],
+                "content": form["text-content"]
             })
         
+        # Write the title and contents of the page into markdown files
         complete_title = form["text-title"] + ".md"
-        print(complete_title)
-        with open(complete_title, "w") as f:
+        with open(path.join("entries/",complete_title), "w") as f:
+            title = "# " + form["text-title"]
+            f.write(title + "\n")
             f.write(form["text-content"])
-            # print(form["text-content"], form["text-title"])
+
+        return HttpResponseRedirect(reverse("index"))
 
     return render(request, "encyclopedia/new_page.html")
