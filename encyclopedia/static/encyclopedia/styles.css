@@ -1,3 +1,8 @@
+/* Fixing jumping scrollbar */
+html {
+    overflow-y: scroll;
+}
+
 body {
     margin: 0;
     background-color: white;
@@ -13,8 +18,21 @@ h1 {
 }
 
 textarea {
-    height: 90vh;
-    width: 80%;
+    height: 80vh !important;
+}
+
+.form-group {
+    width: 90%;
+}
+
+.form-group input {
+    display: block;
+    margin-top: 1vh;
+    margin-bottom: 2vh;
+}
+
+.btn-primary {
+    margin-top: 2vh;
 }
 
 .main {

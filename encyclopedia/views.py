@@ -30,6 +30,7 @@ def wiki_entry(request, title):
                 "form": NewSearchForm()
             })
 
+# Adds a search functionality
 def search(request):
     if request.method == "POST":
         # Get the form data from post
@@ -66,4 +67,27 @@ def search(request):
         "form": NewSearchForm()
     })
 
+# Creates a new page
+def new_page(request):
+    if request.method == "POST":
+        form = request.POST
+        if not form["text-title"]:
+            return render(request, "encyclopedia/new_page.html", {
+                "no_title": "N"
+            })
+        if not form["text-content"]:
+            return render(request, "encyclopedia/new_page.html", {
+                "no_content": "T"
+            })
+        if form["text-title"] in util.list_entries():
+            return render(request, "encyclopedia/new_page.html", {
+                "title_exists": "E"
+            })
+        
+        complete_title = form["text-title"] + ".md"
+        print(complete_title)
+        with open(complete_title, "w") as f:
+            f.write(form["text-content"])
+            # print(form["text-content"], form["text-title"])
 
+    return render(request, "encyclopedia/new_page.html")
