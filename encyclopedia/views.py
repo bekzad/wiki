@@ -8,6 +8,7 @@ import random
 
 from . import util
 
+# A class for Search Page
 class NewSearchForm(forms.Form):
     search = forms.CharField(label='',widget=forms.TextInput(attrs={'class':'search', 'name':'q', 'placeholder':'Search Encyclopedia'}))
 
@@ -24,7 +25,7 @@ def wiki_entry(request, title):
         if util.get_entry(title):
             return render(request, "encyclopedia/wiki_entry.html", {
                 "content": markdowner.convert(util.get_entry(title)),
-                "title": title.upper(),
+                "title": title,
                 "form": NewSearchForm()
             })
         else:
@@ -79,11 +80,15 @@ def new_page(request):
         # Validate the form manually
         if not form["text-title"]:
             return render(request, "encyclopedia/new_page.html", {
-                "no_title": "N"
+                "no_title": "N",
+                "form": NewSearchForm(),
+                "invalidTitle": "is-invalid"
             })
         if not form["text-content"]:
             return render(request, "encyclopedia/new_page.html", {
-                "no_content": "T"
+                "no_content": "T",
+                "form": NewSearchForm(),
+                "invalidContent": "is-invalid"
             })
 
         # If the title already exists the error message appears and the same form is seen
@@ -92,20 +97,55 @@ def new_page(request):
                 "title_exists": "E",
                 "title": form["text-title"],
                 "content": form["text-content"],
-                "invalid": "is-invalid"
+                "invalidTitle": "is-invalid",
+                "form": NewSearchForm()
             })
         
-        # Write the title and contents of the page into markdown files
-        complete_title = form["text-title"] + ".md"
-        with open(path.join("entries/",complete_title), "w") as f:
-            title = "# " + form["text-title"]
-            f.write(title + "\n")
-            f.write(form["text-content"])
+        # Saves the entry with h1 title
+        textContent = "# " + form["text-title"] + "\n" + form["text-content"]
+        util.save_entry(form["text-title"], textContent)
 
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("wiki_entry", args=[form["text-title"]]))
 
-    return render(request, "encyclopedia/new_page.html")
+    return render(request, "encyclopedia/new_page.html", {
+        "form": NewSearchForm()
+    })
 
+# Edits the created page
+def edit_page(request, title):
+    if request.method == "POST":
+        
+        # Get the form data
+        form = request.POST
+
+        # Validate the form manually
+        if not form["text-title"]:
+            return render(request, "encyclopedia/new_page.html", {
+                "no_title": "N",
+                "content": form["text-content"],
+                "form": NewSearchForm(),
+                "invalidTitle": "is-invalid"
+            })
+        if not form["text-content"]:
+            return render(request, "encyclopedia/new_page.html", {
+                "no_content": "T",
+                "title": form["text-title"],
+                "form": NewSearchForm(),
+                "invalidContent": "is-invalid"
+            })
+
+        # Replaces the entry
+        util.save_entry(form["text-title"], form["text-content"])
+
+        return HttpResponseRedirect(reverse("wiki_entry", args=[form["text-title"]]))
+
+    return render(request, "encyclopedia/edit_page.html",{
+        "title": title,
+        "content": util.get_entry(title),
+        "form": NewSearchForm()
+    })
+
+# Goes to a random page
 def random_page(request):
     random_value = random.choice(util.list_entries())
     return HttpResponseRedirect(reverse("wiki_entry", args=[random_value]))

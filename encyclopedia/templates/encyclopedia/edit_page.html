@@ -1,12 +1,12 @@
 {% extends "encyclopedia/layout.html" %}
 
 {% block title %}
-    New Page
+    Edit Page
 {% endblock %}
 
 {% block body %}
     
-    <form action="{% url 'new_page' %}" method="post">
+    <form action="{% url 'edit_page' title%}" method="post">
         {% csrf_token %}
         <div class="form-group">
             <input name="text-title" type="text" class="form-control {{ invalidTitle }}" placeholder="Title" autocomplete="off" autofocus value="{{ title }}" required>
@@ -15,11 +15,7 @@
                 <li>Please fill in the title</li>
             {% endif %}
             
-            {% if title_exists %}
-                <li>Error. The page with this title already exists!</li>
-            {% endif %}
-
-            <textarea name="text-content" id="content" cols="5" rows="5" class="form-control {{ invalidContent }}" placeholder="Content" autocomplete="off" required>{{ content }}</textarea>
+            <textarea name="text-content" id="content" cols="5" rows="5" class="form-control {{ invalidContentl }}" placeholder="Content" autocomplete="off" required>{{ content }}</textarea>
 
             {% if no_content %}
                 <li>Please fill in the content</li>
