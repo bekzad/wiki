@@ -10,7 +10,7 @@ from . import util
 
 # A class for Search Page
 class NewSearchForm(forms.Form):
-    search = forms.CharField(label='',widget=forms.TextInput(attrs={'class':'search', 'name':'q', 'placeholder':'Search Encyclopedia'}))
+    search = forms.CharField(label='',widget=forms.TextInput(attrs={'class':'search', 'name':'q', 'placeholder':'Search Encyclopedia', "autocomplete":"off"}))
 
 # Shows the main page with links
 def index(request):
